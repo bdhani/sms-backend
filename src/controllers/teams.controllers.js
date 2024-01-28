@@ -70,6 +70,32 @@ const getTeam = asyncHandler(async(req, res) => {
     )
 })
 
+const getAllTeams = asyncHandler(async(req, res) => {
+    let team = await TeamDetails.aggregate([
+        {
+            $lookup: {
+                from: "teammembers",
+                localField: "teamMembers",
+                foreignField: "_id",
+                as: "members"
+            }
+        },
+        {
+            $project: {
+                "teamMembers"  : 0
+            }
+        }
+    ])
+
+    if(team == null) {
+        throw new ApiError(500, "Unable to fetch details")
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, team, "Team details fetched successfully")
+    )
+})
+
 const deleteTeam = asyncHandler(async(req, res) => {
 
     const {id} = req.query
@@ -98,4 +124,4 @@ const deleteTeam = asyncHandler(async(req, res) => {
     )
 })
 
-export {addTeam, getTeam, deleteTeam}
+export {addTeam, getTeam, deleteTeam, getAllTeams}
