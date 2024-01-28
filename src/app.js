@@ -19,9 +19,10 @@ app.use(cookieParser())
 // import quizQuestionRouter from "../src/routes/quizQuestion.routes.js"
 // import quizResultRouter from "../src/routes/quizResult.routes.js"
 // import quizDetailsRouter from "../src/routes/quizDetails.routes.js"
+import teamsRouter from "../src/routes/teams.routes.js"
 
 //Routes declaration
-// app.use("/api/v1/quizQuestion",quizQuestionRouter)
+app.use("/api/v1/teams",teamsRouter)
 // app.use("/api/v1/quizResult", quizResultRouter)
 // app.use("/api/v1/quizDetails",quizDetailsRouter)
 

@@ -21,6 +21,8 @@ const teamMemberDataSchema = new Schema({
         type : Number,
         required : true,
     }
+}, {
+    timestamps : true
 })
 
 export const TeamMember = mongoose.model("TeamMember",teamMemberDataSchema)
@@ -38,12 +40,18 @@ const teamDetailsSchema = new Schema({
             required : true
         }
     ],
+    teamId: {
+        type: Number,
+        required : true
+    },
     transactions : [
         {
             type: Schema.Types.ObjectId,
              ref: "Transaction"
         }
     ]
+}, {
+    timestamps: true
 })
 
-export const TeamDetails = mongoose.model("TeamDetail", teamDetailsSchema)
+export const TeamDetails = mongoose.model("TeamDetails", teamDetailsSchema)
