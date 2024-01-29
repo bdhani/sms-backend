@@ -6,25 +6,25 @@ const stocksDataSchema = new Schema({
         required : true,
         trim : true
     },
-    intialValuation : {
+    initialValuation : {
         type : Number,
         required : true,
     },
     initialStockPrice : {
         type : Number,
-        required : true,
     },
-    initalStocks : {
+    initialStocks : {
         type : Number,
         required : true,
     },
     availableStocks : {
         type : Number,
-        default : 0
     },
     sellingPrice : {
         type: Number
     }
+}, {
+    timestamps: true
 })
 
-export const StocksSchema = mongoose.model("Stock",stocksDataSchema)
+export const Stocks = mongoose.model("Stock",stocksDataSchema)

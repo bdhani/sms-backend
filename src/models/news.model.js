@@ -12,7 +12,7 @@ const newsDetailsSchema = new Schema({
     },
     sentiment : {
         type : String,
-        enum : ["postive","neagtive", "neutral"],
+        enum : ["postive","negative", "neutral"],
         default : "neutral",
         required : true
     },
