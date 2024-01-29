@@ -12,7 +12,7 @@ const newsDetailsSchema = new Schema({
     },
     sentiment : {
         type : String,
-        enum : ["postive","negative", "neutral"],
+        enum : ["positive","negative", "neutral"],
         default : "neutral",
         required : true
     },
@@ -35,4 +35,4 @@ const newsDetailsSchema = new Schema({
     }
 })
 
-export const NewsDetails = mongoose.model("NewsDetail", newsDetailsSchema)
+export const News = mongoose.model("NewsDetail", newsDetailsSchema)
