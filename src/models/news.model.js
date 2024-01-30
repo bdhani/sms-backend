@@ -22,7 +22,6 @@ const newsDetailsSchema = new Schema({
     },
     timeOfImpact : {
         type : Number,
-        required : true
     },
     stockImpacted: {
         type : Schema.Types.ObjectId,

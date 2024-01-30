@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import mongoose from "mongoose"
+import getRandomIntInclusive from "../utils/randomiser.js";
 
 const addStocks = asyncHandler(async(req, res) => {
     const {companyName, valuation, initialStocks} = req.body
@@ -107,4 +108,42 @@ const deleteStock = asyncHandler(async(req, res) => {
     )
 })
 
-export {addStocks, getStocks, getAllStocks, deleteStock}
+const randomFluctuationStock = asyncHandler(async(req,res) => {
+    let {max,min,id,sentiment} = req.body
+    let updateParams = {}
+    let randomFluctuation = getRandomIntInclusive(min,max)
+
+    if(sentiment === "positive") {
+        updateParams = {$mul: {"valuation" : (1+0.01*randomFluctuation)}}
+    } else if (sentiment === "negative") {
+        updateParams = {$mul : {"valuation" : (1-0.01*randomFluctuation)}}
+    } else {
+        let random = Math.random()
+        if(random > 0.5) {
+            updateParams = {$mul: {"valuation" : (1+0.01*randomFluctuation)}}
+            sentiment = "positive"
+        } else {
+            updateParams = {$mul : {"valuation" : (1-0.01*randomFluctuation)}}
+            sentiment = "negative"
+        }
+    }
+
+    let fluctuationReponse = await Stocks.updateOne(
+        {"_id" : id}, 
+        updateParams
+    )
+
+    if(fluctuationReponse == null) {
+        throw new ApiError(500, "Error while fluctuating the stock valuation")
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, {
+            "response" : fluctuationReponse,
+            "percentChange" : randomFluctuation,
+            "sentiment" : sentiment
+        }, "Fluctuation done successfully!")
+    )
+})
+
+export {addStocks, getStocks, getAllStocks, deleteStock, randomFluctuationStock}

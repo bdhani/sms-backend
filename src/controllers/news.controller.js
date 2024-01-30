@@ -1,18 +1,19 @@
 import mongoose from "mongoose"
 import { News } from "../models/news.model.js";
+import {Stocks} from "../models/stocks.model.js"
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import getRandomIntInclusive from "../utils/randomiser.js";
 
 
 const addNews = asyncHandler(async(req,res) => {
-    const {newsText, sentiment, fluctuation, timeOfImpact, stockImpacted} = req.body
+    const {newsText, sentiment, fluctuation, stockImpacted} = req.body
 
     let addNewsResponse = await News.create({
         "newsText" : newsText,
         "sentiment" : sentiment,
         "fluctuation" : fluctuation,
-        "timeOfImpact": timeOfImpact,
         "stockImpacted" : stockImpacted
     })
 
@@ -131,5 +132,52 @@ const deleteNews = asyncHandler(async(req,res)=> {
     )
 })
 
+const publishNews = asyncHandler(async(req,res) => {
+    const {id} = req.query
 
-export {addNews, getNewsById, getAllNews, getNewsByFilters, deleteNews}
+    if(id == null) {
+        throw new ApiError(400, "Id is a required ")
+    }
+
+    let getNewsResponse = await News.findById(id)
+    let updateParams = {}
+    let randomFluctuation = getRandomIntInclusive(1,getNewsResponse.fluctuation)
+
+    // res.status(200).json(
+    //     new ApiResponse(200, randomFluctuation, "e")
+    // )
+
+    if(getNewsResponse.sentiment === "positive") {
+        updateParams = {$mul: {"valuation" : (1+0.01*randomFluctuation)}}
+    } else if (getNewsResponse.sentiment === "negative") {
+        updateParams = {$mul : {"valuation" : (1-0.01*randomFluctuation)}}
+    } else {
+        throw new ApiError(400, "Invalid sentiment found")
+    }
+
+    let updateStockResponse = await Stocks.updateOne(
+        {"_id" : getNewsResponse.stockImpacted}, 
+        updateParams
+    )
+
+    let updateNewsDetails = await News.updateOne(
+        {"_id" : id},
+        {$set: {"isDisplayed" : true}}
+    )
+
+    if(updateStockResponse == null || updateNewsDetails == null) {
+        throw new ApiError(500, "Error while publishing news")
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, {
+            "updateStock" : updateStockResponse,
+            "updateNewsDetails": updateNewsDetails,
+            "percentChange" : randomFluctuation
+        }, "Published news successfully")
+    )
+})
+
+
+
+export {addNews, getNewsById, getAllNews, getNewsByFilters, deleteNews, publishNews }
