@@ -1,4 +1,5 @@
 import { Stocks } from "../models/stocks.model.js";
+import {StockLog} from "../models/stocklogs.model.js"
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -47,6 +48,21 @@ const getStocks = asyncHandler(async(req, res) => {
     if(getStocksResponse[0] == null) {
         throw new ApiError(404, "Requested stock not found!")
     }
+
+    let logResponse = await StockLog.create({
+        "stock" : new mongoose.Types.ObjectId(id),
+        "price" : getStocksResponse[0].sellingPrice
+    })
+
+    let getStockTimeStamps = await StockLog.aggregate([
+        {
+            $match : {
+                "stock" : new mongoose.Types.ObjectId(id) 
+            }
+        }
+    ])
+
+    getStocksResponse[0].logs = getStockTimeStamps
 
     res.status(200).json(
         new ApiResponse(200, getStocksResponse[0], "Stock details fetched successfully")
