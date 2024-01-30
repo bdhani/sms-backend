@@ -44,6 +44,16 @@ const teamDetailsSchema = new Schema({
         type: Number,
         required : true
     },
+    currentBalance: {
+        type : Number,
+        default : 10000
+    },
+    portfolio: [
+        {
+            
+        }
+
+    ],
     transactions : [
         {
             type: Schema.Types.ObjectId,

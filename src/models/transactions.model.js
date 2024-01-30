@@ -2,15 +2,10 @@ import mongoose, {Schema} from "mongoose"
 
 const transactionDetailsSchema = new Schema({
     teamId : {
-        type: Schema.Types.ObjectId,
-        ref : "TeamDetail",
+        type: Number,
         required : true
     }, 
-    timeStamp : {
-        type : Schema.Types.Date,
-        default : new Date()
-    },
-    stock : {
+    stocks : {
         type : Schema.Types.ObjectId,
         ref: "Stock"
     },
@@ -23,6 +18,8 @@ const transactionDetailsSchema = new Schema({
         type: Number,
         required: true
     }
+}, {
+    timestamps: true
 })
 
-export const TransactionDetails = mongoose.model("Transaction", transactionDetailsSchema)
+export const Transactions = mongoose.model("Transaction", transactionDetailsSchema)

@@ -6,7 +6,7 @@ const stocksDataSchema = new Schema({
         required : true,
         trim : true
     },
-    initialValuation : {
+    valuation : {
         type : Number,
         required : true,
     },
@@ -20,9 +20,6 @@ const stocksDataSchema = new Schema({
     availableStocks : {
         type : Number,
     },
-    sellingPrice : {
-        type: Number
-    }
 }, {
     timestamps: true
 })

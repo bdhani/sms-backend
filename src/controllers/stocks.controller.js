@@ -2,17 +2,17 @@ import { Stocks } from "../models/stocks.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import mongoose from "mongoose"
 
 const addStocks = asyncHandler(async(req, res) => {
-    const {companyName, initialValuation, initialStocks} = req.body
+    const {companyName, valuation, initialStocks} = req.body
 
     let addStockResponse = await Stocks.create({
         "companyName" : companyName,
-        "initialValuation":initialValuation,
-        "initialStockPrice" : (initialValuation/initialStocks),
+        "valuation": valuation,
+        "initialStockPrice" : (valuation/initialStocks),
         "initialStocks" : initialStocks,
         "availableStocks" : initialStocks,
-        "sellingPrice": (initialValuation/initialStocks)
     })
 
     if(addStockResponse == null) {
@@ -31,19 +31,36 @@ const getStocks = asyncHandler(async(req, res) => {
         throw new ApiError(400, "Stock id is a necessary parameter in request query")
     }
 
-    let getStocksResponse = await Stocks.findById(id)
+    let getStocksResponse = await Stocks.aggregate([
+        {
+            $match : {
+                "_id" : new mongoose.Types.ObjectId(id)
+            }
+        },
+        {
+            $addFields : {
+                sellingPrice : {$divide: ["$valuation","$availableStocks"]},    
+              }
+        }
+    ])
 
-    if(getStocksResponse == null) {
+    if(getStocksResponse[0] == null) {
         throw new ApiError(404, "Requested stock not found!")
     }
 
     res.status(200).json(
-        new ApiResponse(200, getStocksResponse, "Stock details fetched successfully")
+        new ApiResponse(200, getStocksResponse[0], "Stock details fetched successfully")
     )
 })
 
 const getAllStocks = asyncHandler(async(req, res) => {
-    let getStocksResponse = await Stocks.find()
+    let getStocksResponse = await Stocks.aggregate([
+        {
+            $addFields : {
+                sellingPrice : {$divide: ["$valuation","$availableStocks"]},    
+              }
+        }
+    ])
 
     if(getStocksResponse == null) {
         throw new ApiError(500, "Unable to fetch stock details")
