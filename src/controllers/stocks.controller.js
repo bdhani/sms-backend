@@ -146,4 +146,19 @@ const randomFluctuationStock = asyncHandler(async(req,res) => {
     )
 })
 
-export {addStocks, getStocks, getAllStocks, deleteStock, randomFluctuationStock}
+const clearStockLogs = asyncHandler(async(req, res) => {
+    const {id} = req.query
+
+    let clearStockLogsResponse = await StockLog.deleteMany(
+        {"stock" : new mongoose.Types.ObjectId(id)}
+    )
+
+    if(clearStockLogsResponse == null || clearStockLogsResponse.deletedCount < 1) {
+        throw new ApiError(500, "Error clearing the logs")
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, clearStockLogsResponse, "Stocks cleared successfully!")
+    )
+})
+export {addStocks, getStocks, getAllStocks, deleteStock, randomFluctuationStock, clearStockLogs}

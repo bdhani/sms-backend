@@ -146,7 +146,7 @@ const publishNews = asyncHandler(async(req,res) => {
     // res.status(200).json(
     //     new ApiResponse(200, randomFluctuation, "e")
     // )
-
+    
     if(getNewsResponse.sentiment === "positive") {
         updateParams = {$mul: {"valuation" : (1+0.01*randomFluctuation)}}
     } else if (getNewsResponse.sentiment === "negative") {
