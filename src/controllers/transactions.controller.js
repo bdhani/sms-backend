@@ -48,9 +48,9 @@ const performTransaction = asyncHandler(async(req,res)=> {
         let index = teamDetails.portfolio.find((portfolioDetails) => {
             return String(portfolioDetails.stocks) === stockId
         })
-        if(index.numberOfStocks < numberOfStocks) {
-            res.status(410).json(
-                new ApiResponse(410, null, "Insufficient stocks to sell")
+        if(index.numberOfStocks < numberOfStocks || index.numberOfStocks <= 0) {
+            res.status(411).json(
+                new ApiResponse(411, null, "Insufficient stocks to sell")
             )
         }
         
