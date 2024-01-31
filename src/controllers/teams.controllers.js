@@ -80,7 +80,9 @@ const getTeam = asyncHandler(async(req, res) => {
             $project: {
                 "teamMembers"  : 0,
                 "portfolio" : 0,
-                "transactions" : 0
+                "transactions" : 0,
+                "username" : 0,
+                "password" : 0
             }
         }
     ])
@@ -177,11 +179,10 @@ const getPortfolioDetails = asyncHandler(async(req,res)=>{
             }
         },
         {
-            $unwind : "$stockDetails"
-        }, 
-        {
-            $addFields : {
-                "stockDetails.sellingPrice": {$divide: ["$stockDetails.valuation","$stockDetails.availableStocks"]}
+            $project :{
+                "username" : 0,
+                "password" : 0,
+                "transactions" : 0,
             }
         }
     ])
