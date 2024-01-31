@@ -31,17 +31,13 @@ const performTransaction = asyncHandler(async(req,res)=> {
     let teamDetails = await TeamDetails.findOne({"teamId" : teamId})
 
     if(stockDetails.availableStocks <= 0  && type === "buy") {
-        res.status(409).json(
-            new ApiResponse(409, null, "Insufficient stock available to buy")
-        )
+        throw new ApiError(409, "Insufficient stock available to buy")
     }
 
     let requestedPrice = (stockDetails.valuation/stockDetails.availableStocks) * numberOfStocks
     
     if(type === "buy" && teamDetails.currentBalance < requestedPrice) {
-        res.status(410).json(
-            new ApiResponse(410, null, "Insufficient team balance")
-        )
+        throw new ApiError(410, "Insufficient team balance")
     }
 
     if(type === "sell") {
@@ -49,9 +45,7 @@ const performTransaction = asyncHandler(async(req,res)=> {
             return String(portfolioDetails.stocks) === stockId
         })
         if(index.numberOfStocks < numberOfStocks || index.numberOfStocks <= 0) {
-            res.status(411).json(
-                new ApiResponse(411, null, "Insufficient stocks to sell")
-            )
+            throw new ApiError(411, "Insufficient stocks to sell")
         }
         
     }
@@ -87,9 +81,7 @@ const performTransaction = asyncHandler(async(req,res)=> {
        })
 
        if(updateBalanceResponse == null || updatePortfolioResponse == null || updateStockReponse == null || addTransactionResponse == null || stockManipulationResponse == null) {
-        res.status(500).json(
-            new ApiResponse(500, null, "Error occured during the transaction")
-        )
+        throw new ApiError(500, "Error occured during transaction")
        } else {
         res.status(200).json(
             new ApiResponse(200, {
