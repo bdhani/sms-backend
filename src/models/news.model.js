@@ -32,6 +32,8 @@ const newsDetailsSchema = new Schema({
         type : Boolean,
         default : false
     }
+}, {
+    timestamps : true
 })
 
 export const News = mongoose.model("NewsDetail", newsDetailsSchema)

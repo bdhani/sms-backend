@@ -59,7 +59,15 @@ const teamDetailsSchema = new Schema({
             type: Schema.Types.ObjectId,
              ref: "Transaction"
         }
-    ]
+    ],
+    username : {
+        type : String,
+        required : true
+    },
+    password: {
+        type : String,
+        required:  true
+    }
 }, {
     timestamps: true
 })

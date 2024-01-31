@@ -6,8 +6,12 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import mongoose from "mongoose"
 
 const addTeam = asyncHandler(async(req,res)=> {
-    const {teamDetails, teamName, teamId} = req.body
+    const {teamDetails, teamName, teamId, username, password} = req.body
     let id = parseInt(teamId)
+
+    if(username == null && password == null) {
+        throw new ApiError(400, "Username and password are required")
+    }
 
     let teamMembers = await TeamMember.insertMany(teamDetails)
 
@@ -34,7 +38,9 @@ const addTeam = asyncHandler(async(req,res)=> {
         teamName,
         teamMembers,
         teamId : id,
-        portfolio : portfolio
+        portfolio : portfolio,
+        username : username,
+        password : password
     })
 
     if(team == null) {
@@ -72,7 +78,9 @@ const getTeam = asyncHandler(async(req, res) => {
         },
         {
             $project: {
-                "teamMembers"  : 0
+                "teamMembers"  : 0,
+                "portfolio" : 0,
+                "transactions" : 0
             }
         }
     ])
@@ -100,7 +108,11 @@ const getAllTeams = asyncHandler(async(req, res) => {
         },
         {
             $project: {
-                "teamMembers"  : 0
+                "teamMembers"  : 0,
+                "portfolio" : 0,
+                "transactions" : 0,
+                "username" : 0,
+                "password" : 0
             }
         }
     ])
@@ -190,4 +202,27 @@ const getPortfolioDetails = asyncHandler(async(req,res)=>{
 
 })
 
-export {addTeam, getTeam, deleteTeam, getAllTeams, getPortfolioDetails}
+const authenticateTeam = asyncHandler(async(req,res) => {
+    const {username, password} = req.body
+
+    if(username == null || password == null) {
+        throw new ApiError(400, "Username and password are required fields")
+    }
+
+    let authResponse = await TeamDetails.findOne(
+        {
+            "username" : username,
+            "password" : password
+        }
+    )
+
+    if(authResponse == null) {
+        throw new ApiError(403, "Authentication failed!")
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, authResponse._id, "Authentication successful")
+    )
+})
+
+export {addTeam, getTeam, deleteTeam, getAllTeams, getPortfolioDetails, authenticateTeam}
