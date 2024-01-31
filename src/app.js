@@ -23,12 +23,14 @@ import teamsRouter from "../src/routes/teams.routes.js"
 import stocksRouter from "../src/routes/stocks.routes.js"
 import newsRouter from "../src/routes/news.routes.js"
 import transactionRouter from "../src/routes/transactions.routes.js"
+import brokerRouter from "../src/routes/brokers.routes.js"
 
 //Routes declaration
 app.use("/api/v1/teams",teamsRouter)
 app.use("/api/v1/stocks", stocksRouter)
 app.use("/api/v1/news" , newsRouter)
 app.use("/api/v1/transactions", transactionRouter)
+app.use("/api/v1/brokers", brokerRouter)
 // app.use("/api/v1/quizResult", quizResultRouter)
 // app.use("/api/v1/quizDetails",quizDetailsRouter)
 

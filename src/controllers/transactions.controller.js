@@ -1,3 +1,4 @@
+import { Brokers } from "../models/brokers.model.js";
 import { Stocks } from "../models/stocks.model.js";
 import { TeamDetails } from "../models/teams.model.js";
 import { Transactions } from "../models/transactions.model.js";
@@ -8,7 +9,17 @@ import mongoose from "mongoose"
 
 
 const performTransaction = asyncHandler(async(req,res)=> {
-    const {teamId, stockId, numberOfStocks, type} = req.body
+    const {teamId, stockId, numberOfStocks, type, brokerId} = req.body
+
+    if(brokerId == null) {
+        throw new ApiError(400, "BrokerId is a required parameter")
+    }
+
+    let findBrokerResponse = await Brokers.findById(brokerId)
+
+    if(findBrokerResponse == null) {
+        throw new ApiError(403, "Authentication failed")
+    }
 
     if(teamId == null || stockId == null || numberOfStocks == null || type == null) {
         res.status(400).json(
@@ -25,7 +36,7 @@ const performTransaction = asyncHandler(async(req,res)=> {
         )
     }
 
-    let requestedPrice = stockDetails.sellingPrice * numberOfStocks
+    let requestedPrice = (stockDetails.valuation/stockDetails.availableStocks) * numberOfStocks
     
     if(type === "buy" && teamDetails.currentBalance < requestedPrice) {
         res.status(410).json(
@@ -44,8 +55,8 @@ const performTransaction = asyncHandler(async(req,res)=> {
         }
         
     }
-
     if(type === "buy") {
+        // console.log(stockDetails)
        let updateBalanceResponse =  await TeamDetails.updateOne(
         {"teamId" : teamId},
         {
