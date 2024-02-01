@@ -31,7 +31,7 @@ const performTransaction = asyncHandler(async(req,res)=> {
     console.log(stockDetails.availableStocks)
     let teamDetails = await TeamDetails.findOne({"teamId" : teamId})
 
-    if(stockDetails.availableStocks <= 0  && type === "buy") {
+    if(stockDetails.availableStocks <= numberOfStocks  && type === "buy") {
         throw new ApiError(409, "Insufficient stock available to buy")
     }
 
