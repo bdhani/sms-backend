@@ -6,8 +6,8 @@ const transactionDetailsSchema = new Schema({
         required : true
     }, 
     stocks : {
-        type : Schema.Types.ObjectId,
-        ref: "Stock"
+        type : String,
+        required: true
     },
     type:  {
         type: String,
@@ -17,6 +17,10 @@ const transactionDetailsSchema = new Schema({
     numberOfStocks : {
         type: Number,
         required: true
+    },
+    broker : {
+        type : String,
+        required : true
     }
 }, {
     timestamps: true

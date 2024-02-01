@@ -28,8 +28,16 @@ const performTransaction = asyncHandler(async(req,res)=> {
     }
 
     let stockDetails = await Stocks.findOne({"_id" : stockId})
-    console.log(stockDetails.availableStocks)
+    
+    if(stockDetails == null) {
+        throw new ApiError(404, "Stock details not found")
+    }
+
     let teamDetails = await TeamDetails.findOne({"teamId" : teamId})
+
+    if(teamDetails == null ) {
+        throw new ApiError(404, "Team not found")
+    }
 
     if(stockDetails.availableStocks <= numberOfStocks  && type === "buy") {
         throw new ApiError(409, "Insufficient stock available to buy")
@@ -76,9 +84,10 @@ const performTransaction = asyncHandler(async(req,res)=> {
 
        let addTransactionResponse = await Transactions.create({
         teamId,
-        stockId,
+        "stocks" : stockDetails.companyName,
         type,
-        numberOfStocks
+        numberOfStocks,
+        "broker" : findBrokerResponse.username
        })
 
        if(updateBalanceResponse == null || updatePortfolioResponse == null || updateStockReponse == null || addTransactionResponse == null || stockManipulationResponse == null) {
@@ -124,7 +133,8 @@ if(type === "sell") {
      teamId,
      stockId,
      type,
-     numberOfStocks
+     numberOfStocks,
+     "broker" : findBrokerResponse.username
     })
 
     if(updateBalanceResponse == null || updatePortfolioResponse == null || updateStockReponse == null || addTransactionResponse == null || stockManipulationResponse == null) {
