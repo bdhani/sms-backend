@@ -10,6 +10,15 @@ const brokerSchema = new Schema({
         type : String,
         required: true,
         trim : true
+    },
+    stockId : {
+        type : Schema.Types.ObjectId,
+        ref : "Stock",
+        required : true
+    },
+    isAll : {
+        type : Boolean,
+        default : false
     }
 }, {
     timestamps : true
