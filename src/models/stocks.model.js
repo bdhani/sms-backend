@@ -8,12 +8,11 @@ const stocksDataSchema = new Schema({
     },
     valuation : {
         type : Number,
-        required : true,
     },
     initialStockPrice : {
         type : Number,
     },
-    initialStocks : {
+    totalStocks : {
         type : Number,
         required : true,
     },

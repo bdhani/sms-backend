@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addStocks, clearStockLogs, deleteStock, getAllStocks, getStocks, randomFluctuationStock } from "../controllers/stocks.controller.js";
+import { addAdditionalStocks, addStocks, clearStockLogs, deleteStock, getAllStocks, getStocks, randomFluctuationStock } from "../controllers/stocks.controller.js";
 
 const router = Router()
 
@@ -9,5 +9,6 @@ router.route("/getAllStocks").get(getAllStocks)
 router.route("/delete").delete(deleteStock)
 router.route("/fluctuate").post(randomFluctuationStock)
 router.route("/clearLogs").delete(clearStockLogs)
+router.route("/addAdditionalStocks").post(addAdditionalStocks)
 
 export default router

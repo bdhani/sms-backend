@@ -13,7 +13,7 @@ const addStocks = asyncHandler(async(req, res) => {
         "companyName" : companyName,
         "valuation": (initialStocks*initialPrice),
         "initialStockPrice" : initialPrice,
-        "initialStocks" : initialStocks,    
+        "totalStocks" : initialStocks,    
         "availableStocks" : initialStocks,
     })
 
@@ -161,4 +161,25 @@ const clearStockLogs = asyncHandler(async(req, res) => {
         new ApiResponse(200, clearStockLogsResponse, "Stocks cleared successfully!")
     )
 })
-export {addStocks, getStocks, getAllStocks, deleteStock, randomFluctuationStock, clearStockLogs}
+
+const addAdditionalStocks = asyncHandler(async(req,res) => {
+    const {value, stockId} = req.body
+
+    let response = await Stocks.updateOne(
+        {_id: stockId},
+        {
+            "$inc" : {"totalStocks" : value, "availableStocks" : value}
+            // "$inc" : {"availableStocks" : value}
+        }
+    )
+
+    if(!response) {
+        throw new ApiError(500, "Error adding additional stocks")
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, response, "Additional stocks added successfully")
+    )
+})
+
+export {addStocks, getStocks, getAllStocks, deleteStock, randomFluctuationStock, clearStockLogs, addAdditionalStocks}
