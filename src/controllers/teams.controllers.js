@@ -226,4 +226,41 @@ const authenticateTeam = asyncHandler(async(req,res) => {
     )
 })
 
-export {addTeam, getTeam, deleteTeam, getAllTeams, getPortfolioDetails, authenticateTeam}
+const setTeamBalance = asyncHandler(async(req,res) => {
+    const {value} = req.query
+    let teamBalance = parseFloat(value)
+
+    if(!value) {
+        throw new ApiError(400, "Value is required in query param")
+    }
+
+    let response = await TeamDetails.updateMany(
+        {},
+        {$set : {"currentBalance" : teamBalance}}
+    )
+
+    if(!response) {
+        throw new ApiError(500, "Error while updating team balance")
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, response, "Updated team balance successfully")
+    )
+})
+
+const resetPortfolio = asyncHandler(async(req,res) => {
+    let response = await TeamDetails.updateMany(
+        {},
+        {$set: {"portfolio.$[].numberOfStocks" : 0}}
+    )
+
+    if(!response) {
+        throw new ApiError(500, "Error while reseting the portfolio")
+    }
+    
+    res.status(200).json(
+        new ApiResponse(200, response, "Reset portfolio done successfully")
+    )
+})
+
+export {addTeam, getTeam, deleteTeam, getAllTeams, getPortfolioDetails, authenticateTeam, setTeamBalance, resetPortfolio}
