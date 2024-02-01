@@ -28,6 +28,7 @@ const performTransaction = asyncHandler(async(req,res)=> {
     }
 
     let stockDetails = await Stocks.findOne({"_id" : stockId})
+    console.log(stockDetails.availableStocks)
     let teamDetails = await TeamDetails.findOne({"teamId" : teamId})
 
     if(stockDetails.availableStocks <= 0  && type === "buy") {
@@ -58,7 +59,7 @@ const performTransaction = asyncHandler(async(req,res)=> {
        }) 
 
        let updatePortfolioResponse = await TeamDetails.updateOne(
-        {"portfolio.stocks": new mongoose.Types.ObjectId(stockId)},
+        {"portfolio.stocks": new mongoose.Types.ObjectId(stockId), "teamId" : teamId},
         {$inc: {"portfolio.$.numberOfStocks" : numberOfStocks}
     })
 
@@ -104,7 +105,7 @@ if(type === "sell") {
     }) 
 
     let updatePortfolioResponse = await TeamDetails.updateOne(
-     {"portfolio.stocks": new mongoose.Types.ObjectId(stockId)},
+     {"portfolio.stocks": new mongoose.Types.ObjectId(stockId),  "teamId" : teamId},
      {$inc: {"portfolio.$.numberOfStocks" : -numberOfStocks}
  })
 
