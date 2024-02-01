@@ -7,13 +7,13 @@ import mongoose from "mongoose"
 import getRandomIntInclusive from "../utils/randomiser.js";
 
 const addStocks = asyncHandler(async(req, res) => {
-    const {companyName, valuation, initialStocks} = req.body
+    const {companyName, initialPrice, initialStocks} = req.body
 
     let addStockResponse = await Stocks.create({
         "companyName" : companyName,
-        "valuation": valuation,
-        "initialStockPrice" : (valuation/initialStocks),
-        "initialStocks" : initialStocks,
+        "valuation": (initialStocks*initialPrice),
+        "initialStockPrice" : initialPrice,
+        "initialStocks" : initialStocks,    
         "availableStocks" : initialStocks,
     })
 

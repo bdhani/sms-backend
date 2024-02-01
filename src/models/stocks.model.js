@@ -20,6 +20,10 @@ const stocksDataSchema = new Schema({
     availableStocks : {
         type : Number,
     },
+    isLaunched : {
+        type : Boolean,
+        default : true
+    }
 }, {
     timestamps: true
 })
