@@ -27,10 +27,15 @@ const addStocks = asyncHandler(async(req, res) => {
 })
 
 const getStocks = asyncHandler(async(req, res) => {
-    const {id} = req.query
+    let {id, logType} = req.query
+
 
     if(id == null) {
         throw new ApiError(400, "Stock id is a necessary parameter in request query")
+    }
+
+    if(logType == null) {
+        logType = "recent"
     }
 
     let getStocksResponse = await Stocks.aggregate([
@@ -55,15 +60,27 @@ const getStocks = asyncHandler(async(req, res) => {
         "price" : getStocksResponse[0].sellingPrice
     })
 
-    let getStockTimeStamps = await StockLog.aggregate([
-        {
-            $match : {
-                "stock" : new mongoose.Types.ObjectId(id) 
+    if(logType == "all") {
+        let getStockTimeStamps = await StockLog.aggregate([
+            {
+                $match : {
+                    "stock" : new mongoose.Types.ObjectId(id) 
+                }
             }
-        }
-    ])
+        ])
+    
+        getStocksResponse[0].logs = getStockTimeStamps
+    } else {
+        let getStockTimeStamps = await StockLog.findOne({"stock" : new mongoose.Types.ObjectId(id)}).sort({"createdAt" : -1})
 
-    getStocksResponse[0].logs = getStockTimeStamps
+        if( getStockTimeStamps == null) {
+            throw new ApiError(500, "Error fetching current log")
+        }
+
+        getStocksResponse[0].logs = [getStockTimeStamps]
+    }
+
+    
 
     res.status(200).json(
         new ApiResponse(200, getStocksResponse[0], "Stock details fetched successfully")
