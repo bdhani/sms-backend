@@ -7,11 +7,16 @@ import mongoose from "mongoose"
 
 const addTeam = asyncHandler(async(req,res)=> {
     const {teamDetails, teamName, teamId, username, password} = req.body
-    let id = parseInt(teamId)
+    // let id = parseInt(teamId)
 
     if(username == null && password == null) {
         throw new ApiError(400, "Username and password are required")
     }
+
+    let updateTeamIdResponse = await TeamDetails.findOneAndUpdate(
+        {_id : "65bc8f9a7cf83bad57165e7f"},
+        {$inc: {"teamIdCount" : 1}} 
+    )
 
     let teamMembers = await TeamMember.insertMany(teamDetails)
 
@@ -28,16 +33,17 @@ const addTeam = asyncHandler(async(req,res)=> {
         // console.log(stock._id)
         let data = {
             "stocks" : stock._id,
-            "numberOfStocks": 0
+            "numberOfStocks": 0,
         }
         // console.log(data)
         portfolio.push(data)
     })
 
+
     let team = await TeamDetails.create({
         teamName,
         teamMembers,
-        teamId : id,
+        teamId : updateTeamIdResponse.teamIdCount,
         portfolio : portfolio,
         username : username,
         password : password
@@ -167,7 +173,7 @@ const getPortfolioDetails = asyncHandler(async(req,res)=>{
     let portfolioResponse = await TeamDetails.aggregate([
         {
           $match : {
-            "_id" : new mongoose.Types.ObjectId(id)
+            "_id" : new mongoose.Types.ObjectId(id),
           }  
         },
         {

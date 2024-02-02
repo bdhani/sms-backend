@@ -42,7 +42,6 @@ const teamDetailsSchema = new Schema({
     ],
     teamId: {
         type: Number,
-        required : true
     },
     currentBalance: {
         type : Number,
@@ -65,6 +64,9 @@ const teamDetailsSchema = new Schema({
     isDummy: {
         type : Boolean,
         default : false
+    },
+    teamIdCount : {
+        type : Number
     }
 }, {
     timestamps: true
