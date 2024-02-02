@@ -9,6 +9,7 @@ import mongoose from "mongoose"
 
 
 const performTransaction = asyncHandler(async(req,res)=> {
+
     const {teamId, stockId, numberOfStocks, type, brokerId} = req.body
 
     if(brokerId == null) {
@@ -60,6 +61,7 @@ const performTransaction = asyncHandler(async(req,res)=> {
     }
     if(type === "buy") {
         // console.log(stockDetails)
+
        let updateBalanceResponse =  await TeamDetails.updateOne(
         {"teamId" : teamId},
         {
@@ -89,6 +91,7 @@ const performTransaction = asyncHandler(async(req,res)=> {
         numberOfStocks,
         "broker" : findBrokerResponse.username
        })
+
 
        if(updateBalanceResponse == null || updatePortfolioResponse == null || updateStockReponse == null || addTransactionResponse == null || stockManipulationResponse == null) {
         throw new ApiError(500, "Error occured during transaction")
@@ -131,7 +134,7 @@ if(type === "sell") {
 
     let addTransactionResponse = await Transactions.create({
      teamId,
-     stockId,
+     "stocks" : stockDetails.companyName,
      type,
      numberOfStocks,
      "broker" : findBrokerResponse.username
