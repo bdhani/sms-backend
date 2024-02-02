@@ -3,7 +3,7 @@ import { Stocks } from "../models/stocks.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import {ApiResponse} from "../utils/ApiResponse.js"
 import { asyncHandler } from "../utils/asyncHandler.js";
-import mongoose from "mongoose"
+import mongoose, { Schema } from "mongoose"
 
 const addTeam = asyncHandler(async(req,res)=> {
     const {teamDetails, teamName, teamId, username, password} = req.body
@@ -255,8 +255,9 @@ const setTeamBalance = asyncHandler(async(req,res) => {
 })
 
 const resetPortfolio = asyncHandler(async(req,res) => {
+    
     let response = await TeamDetails.updateMany(
-        {},
+        {"isAdmin" : false},
         {$set: {"portfolio.$[].numberOfStocks" : 0}}
     )
 
@@ -269,4 +270,190 @@ const resetPortfolio = asyncHandler(async(req,res) => {
     )
 })
 
-export {addTeam, getTeam, deleteTeam, getAllTeams, getPortfolioDetails, authenticateTeam, setTeamBalance, resetPortfolio}
+const getLeaderBoard = asyncHandler(async(req,res) => {
+    
+    let leaderboardResponse = await TeamDetails.aggregate([
+        {
+            $match: {
+                "isDummy" : false
+            }
+        },
+        {
+            $unwind: "$portfolio"
+        },
+        {
+            $lookup: {
+                from: "stocks",
+                localField : "portfolio.stocks",
+                foreignField: "_id",
+                as: "stockDetails"
+            }   
+        },
+        {
+            $addFields: {
+                "valuation": {
+                  $getField : {
+                    "field" : "valuation",
+                    "input" : {$arrayElemAt: ["$stockDetails",0]}
+                  }
+                },
+                 "availableStocks": {
+                  $getField : {
+                    "field" : "availableStocks",
+                    "input" : {$arrayElemAt: ["$stockDetails",0]}
+                  }
+                }
+            }
+        },
+        {
+            $group: {
+                _id: "$_id",
+                "portfolioWorth": {
+                  $sum: {
+                    $multiply : ["$portfolio.numberOfStocks", {$divide: ["$valuation","$availableStocks"]}]
+                  }
+                },
+                "currentBalance" : {
+                  $addToSet: "$currentBalance"
+                }
+              }
+        },
+        {
+            $addFields: {
+                "currentBalance": {
+                  $arrayElemAt : ["$currentBalance", 0]
+                }
+              }
+        },
+        {
+            $addFields: {
+                totalWorth: {$add: ["$portfolioWorth","$currentBalance"]}
+              }
+        },
+        {
+            $sort: {
+                "totalWorth" : -1
+              }
+        },
+        {
+            $lookup: {
+                from: "teamdetails",
+                localField: "_id",
+                foreignField: "_id",
+                as: "teamDetails"
+              }
+        },
+        {
+            $lookup: {
+                from: "teammembers",
+                localField: "teamDetails.teamMembers",
+                foreignField: "_id",
+                as: "teamMembers"
+            }
+        },
+        {
+            $addFields: {
+                "teamDetails": {
+                  $arrayElemAt: ["$teamDetails", 0]
+                }
+              }	
+        }
+    ])
+
+    if(leaderboardResponse == null) {
+        throw new ApiError(500, "Error while fetching leaderboard")
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, leaderboardResponse, "Leaderboard fetched successfully")
+    )
+})
+
+const getWorth = asyncHandler(async(req,res) => {
+    const {id} = req.query
+    
+    if(id == null ) {
+        throw new ApiError(400, "Id field is required as a query params")
+    }
+
+    let objectId = new mongoose.Types.ObjectId(id)
+
+    let worthResponse = await TeamDetails.aggregate([
+        {
+            $match: {
+                "_id" : objectId,
+                // "isDummy" : false,
+                // _id : new Schema.Types.ObjectId(id)
+            }
+        },
+        {
+            $unwind: "$portfolio"
+        },
+        {
+            $lookup: {
+                from: "stocks",
+                localField : "portfolio.stocks",
+                foreignField: "_id",
+                as: "stockDetails"
+            }   
+        },
+        {
+            $addFields: {
+                "valuation": {
+                  $getField : {
+                    "field" : "valuation",
+                    "input" : {$arrayElemAt: ["$stockDetails",0]}
+                  }
+                },
+                 "availableStocks": {
+                  $getField : {
+                    "field" : "availableStocks",
+                    "input" : {$arrayElemAt: ["$stockDetails",0]}
+                  }
+                }
+            }
+        },
+        {
+            $group: {
+                _id: "$_id",
+                "portfolioWorth": {
+                  $sum: {
+                    $multiply : ["$portfolio.numberOfStocks", {$divide: ["$valuation","$availableStocks"]}]
+                  }
+                },
+                "currentBalance" : {
+                  $addToSet: "$currentBalance"
+                }
+              }
+        },
+        {
+            $addFields: {
+                "currentBalance": {
+                  $arrayElemAt : ["$currentBalance", 0]
+                }
+              }
+        },
+        {
+            $addFields: {
+                totalWorth: {$add: ["$portfolioWorth","$currentBalance"]}
+              }
+        },
+    ])
+
+    if(worthResponse == null) {
+        throw new ApiError(500, "Error while fetching worth details")
+    }
+
+    if(worthResponse.length == 0) {
+        res.status(404).json(
+            new ApiResponse(404, null, "No such team found")
+        )
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, worthResponse[0], "Worth details fetched successfully")
+    )
+
+})
+
+export {addTeam, getTeam, deleteTeam, getAllTeams, getPortfolioDetails, authenticateTeam, setTeamBalance, resetPortfolio, getLeaderBoard, getWorth}

@@ -67,6 +67,10 @@ const teamDetailsSchema = new Schema({
     },
     teamIdCount : {
         type : Number
+    },
+    isAdmin : {
+        type : Boolean,
+        default: false
     }
 }, {
     timestamps: true
