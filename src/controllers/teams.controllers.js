@@ -357,6 +357,12 @@ const getLeaderBoard = asyncHandler(async(req,res) => {
                   $arrayElemAt: ["$teamDetails", 0]
                 }
               }	
+        },
+        {
+            $project:  {
+                "username" : 0,
+                "password" : 0,
+            }
         }
     ])
 
