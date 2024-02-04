@@ -11,7 +11,7 @@ router.route("/getPortfolioDetails").get(getPortfolioDetails)
 router.route("/auth").post(authenticateTeam)
 router.route("/setBalance").put(setTeamBalance)
 router.route("/resetPortfolio").put(resetPortfolio)
-// router.route("/getLeaderBoard").get(getLeaderBoard)
+router.route("/getLeaderBoard").get(getLeaderBoard)
 router.route("/getWorth").get(getWorth)
 
 export default router
