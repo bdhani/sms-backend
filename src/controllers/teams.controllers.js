@@ -107,6 +107,9 @@ const getTeam = asyncHandler(async(req, res) => {
 const getAllTeams = asyncHandler(async(req, res) => {
     let team = await TeamDetails.aggregate([
         {
+            "isDummy" : "false"
+        },
+        {
             $lookup: {
                 from: "teammembers",
                 localField: "teamMembers",

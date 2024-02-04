@@ -28,11 +28,27 @@ const performTransaction = asyncHandler(async(req,res)=> {
         )
     }
 
+
     let stockDetails = await Stocks.findOne({"_id" : stockId})
+    
     
     if(stockDetails == null) {
         throw new ApiError(404, "Stock details not found")
     }
+
+        let currentTime = new Date()
+        let previousTime = currentTime - 60000
+        console.log(new Date(previousTime))
+
+
+    let lastTransactions = await Transactions.find({"teamId" :teamId, "stocks": stockDetails.companyName, "createdAt" : {$gte : previousTime} }).sort({"createdAt": -1})
+    console.log(lastTransactions)
+
+    if(lastTransactions.length >= 3) {
+        throw new ApiError(420, "Max time period reached")   
+    }
+
+
 
     let teamDetails = await TeamDetails.findOne({"teamId" : teamId})
 
@@ -72,6 +88,9 @@ const performTransaction = asyncHandler(async(req,res)=> {
         {"portfolio.stocks": new mongoose.Types.ObjectId(stockId), "teamId" : teamId},
         {$inc: {"portfolio.$.numberOfStocks" : numberOfStocks}
     })
+
+    // let updateStockReponse = 1
+    // let stockManipulationResponse =1
 
        let updateStockReponse = await Stocks.updateOne(
         {"_id" : stockId},
