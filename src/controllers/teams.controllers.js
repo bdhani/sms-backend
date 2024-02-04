@@ -257,7 +257,7 @@ const setTeamBalance = asyncHandler(async(req,res) => {
 const resetPortfolio = asyncHandler(async(req,res) => {
     
     let response = await TeamDetails.updateMany(
-        {"isAdmin" : false},
+        {},
         {$set: {"portfolio.$[].numberOfStocks" : 0}}
     )
 
