@@ -360,8 +360,9 @@ const getLeaderBoard = asyncHandler(async(req,res) => {
         },
         {
             $project:  {
-                "username" : 0,
-                "password" : 0,
+                "teamDetails.username" : 0,
+                "teamDetails.password" : 0,
+                "teamDetails.isDummy" : 0
             }
         }
     ])
