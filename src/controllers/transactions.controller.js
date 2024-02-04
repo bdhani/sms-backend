@@ -44,7 +44,7 @@ const performTransaction = asyncHandler(async(req,res)=> {
     let lastTransactions = await Transactions.find({"teamId" :teamId, "stocks": stockDetails.companyName, "createdAt" : {$gte : previousTime} }).sort({"createdAt": -1})
     console.log(lastTransactions)
 
-    if(lastTransactions.length >= 3) {
+    if(lastTransactions.length >= 3 && teamId != 0) {
         throw new ApiError(420, "Max time period reached")   
     }
 
