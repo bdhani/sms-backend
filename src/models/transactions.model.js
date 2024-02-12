@@ -11,7 +11,7 @@ const transactionDetailsSchema = new Schema({
     },
     type:  {
         type: String,
-        enum: ["buy","sell"],
+        enum: ["buy","sell","revert"],
         required : true
     },
     numberOfStocks : {
@@ -21,6 +21,9 @@ const transactionDetailsSchema = new Schema({
     broker : {
         type : String,
         required : true
+    },
+    sellingPrice : {
+        type: Number
     }
 }, {
     timestamps: true

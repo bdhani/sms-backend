@@ -108,7 +108,8 @@ const performTransaction = asyncHandler(async(req,res)=> {
         "stocks" : stockDetails.companyName,
         type,
         numberOfStocks,
-        "broker" : findBrokerResponse.username
+        "broker" : findBrokerResponse.username,
+        "sellingPrice" : (stockDetails.valuation/stockDetails.availableStocks)
        })
 
 
@@ -156,7 +157,8 @@ if(type === "sell") {
      "stocks" : stockDetails.companyName,
      type,
      numberOfStocks,
-     "broker" : findBrokerResponse.username
+     "broker" : findBrokerResponse.username,
+     "sellingPrice" : (stockDetails.valuation/stockDetails.availableStocks)
     })
 
     if(updateBalanceResponse == null || updatePortfolioResponse == null || updateStockReponse == null || addTransactionResponse == null || stockManipulationResponse == null) {
@@ -179,4 +181,72 @@ if(type === "sell") {
 
 })
 
-export {performTransaction}
+const revertTransactions = asyncHandler(async(req, res)=> {
+    const {transactionId} = req.body
+    
+    let transactionResponse = await Transactions.findById(transactionId)
+
+    if(transactionResponse == null) {
+        throw new ApiError(404, "Requested transaction not found!")
+    }
+
+    let stockDetails = await Stocks.findOne({
+        "companyName" : transactionResponse.stocks
+    })
+
+    if(transactionResponse.type === "sell") {
+        // console.log(stockDetails)
+
+       let updateBalanceResponse =  await TeamDetails.updateOne(
+        {"teamId" : transactionResponse.teamId},
+        {
+            $inc : {"currentBalance" : -(transactionResponse.sellingPrice * transactionResponse.numberOfStocks)}
+       }) 
+
+       let updatePortfolioResponse = await TeamDetails.updateOne(
+        {"portfolio.stocks": stockDetails._id, "teamId" : transactionResponse.teamId},
+        {$inc: {"portfolio.$.numberOfStocks" : transactionResponse.numberOfStocks}
+    })
+
+    // let updateStockReponse = 1
+    // let stockManipulationResponse =1
+
+       let updateStockReponse = await Stocks.updateOne(
+        {"_id" : stockDetails._id},
+        {$inc : {"availableStocks" : -transactionResponse.numberOfStocks}}
+       )
+
+
+       let stockManipulationResponse = await Stocks.updateOne(
+        {"_id" : transactionResponse.stockId},
+        {$inc : {"valuation" : (transactionResponse.sellingPrice * transactionResponse.numberOfStocks)}}
+       )
+
+       let addTransactionResponse = await Transactions.create({
+        "teamId" : transactionResponse.teamId,
+        "stocks" : stockDetails.companyName,
+        "type": "revert",
+        "numberOfStocks": transactionResponse.numberOfStocks,
+        "broker" : "revert"
+       })
+
+
+       if(updateBalanceResponse == null || updatePortfolioResponse == null || updateStockReponse == null || addTransactionResponse == null || stockManipulationResponse == null) {
+        throw new ApiError(500, "Error occured during transaction")
+       } else {
+        res.status(200).json(
+            new ApiResponse(200, {
+                "updateBalance" : updateBalanceResponse,
+                "updatePortfolio" : updatePortfolioResponse,
+                "updateStock" : updateStockReponse,
+                "addTransaction"  : addTransactionResponse,
+                "stockManipulation" : stockManipulationResponse
+            }, "Revert Transaction is successful!")
+
+        )
+       }
+}
+
+})
+
+export {performTransaction, revertTransactions}
