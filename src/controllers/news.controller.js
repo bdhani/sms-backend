@@ -178,6 +178,57 @@ const publishNews = asyncHandler(async(req,res) => {
     )
 })
 
+const republishNews = asyncHandler(async (req, res) => {
+    const { id } = req.query;
+
+    if (id == null) {
+        throw new ApiError(400, "Id is a required");
+    }
+
+    // Retrieve the news details
+    let getNewsResponse = await News.findById(id);
+    if (!getNewsResponse) {
+        throw new ApiError(404, "News not found");
+    }
+
+    let updateParams = {};
+    let randomFluctuation = getRandomIntInclusive(1, getNewsResponse.fluctuation);
+
+    // If the sentiment is positive, the stock price will increase based on the fluctuation
+    if (getNewsResponse.sentiment === "positive") {
+        updateParams = { $mul: { "valuation": (1 + 0.01 * randomFluctuation) } };
+    } else if (getNewsResponse.sentiment === "negative") {
+        updateParams = { $mul: { "valuation": (1 - 0.01 * randomFluctuation) } };
+    } else {
+        throw new ApiError(400, "Invalid sentiment found");
+    }
+
+    // Update the stock affected by this news
+    let updateStockResponse = await Stocks.updateOne(
+        { "_id": getNewsResponse.stockImpacted },
+        updateParams
+    );
+
+    // Reset the "isDisplayed" flag to false so it can be published again
+    let updateNewsDetails = await News.updateOne(
+        { "_id": id },
+        { $set: { "isDisplayed": false } }
+    );
+
+    if (updateStockResponse == null || updateNewsDetails == null) {
+        throw new ApiError(500, "Error while republishing the news");
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, {
+            "updateStock": updateStockResponse,
+            "updateNewsDetails": updateNewsDetails,
+            "percentChange": randomFluctuation
+        }, "Republished news successfully")
+    );
+});
 
 
-export {addNews, getNewsById, getAllNews, getNewsByFilters, deleteNews, publishNews }
+
+
+export {addNews, getNewsById, getAllNews, getNewsByFilters, deleteNews, publishNews,republishNews }
