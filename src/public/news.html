@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>News </title>
+</head>
+<body class="bg-gray-200">
+  <div class="container mx-auto p-4">
+
+    <!-- Company Detail Section -->
+    <div class="mb-4">
+      <h1 id="companyName" class="text-2xl font-bold mb-2"></h1>
+      <p class="text-gray-600 mb-2">Current Stock Price: <span id="price"></span></p>
+    </div>
+    <!-- Stock Price News Section -->
+    <section class="mb-8">
+      <h2 class="text-3xl font-bold mb-4">Stock Price News</h2>
+
+      <button type="button" id="refreshNews" class="bg-blue-500 text-white py-2 px-4 rounded-md">Refresh News</button>
+      <div id="newsSection" class="space-y-4 mb-8 bg-yellow-200">
+      </div>
+  </section>
+  </div>
+
+  <!-- Footer Section -->
+  <footer class="bg-gray-300 p-4 text-center">
+    Stock Simulator Built By Ayushman, Divya, Deepanshu, Dhani 
+  </footer>
+
+  <!-- External Libraries -->
+  <!-- Add links to external libraries for chart rendering (e.g., Chart.js) -->
+
+
+  <script src="news.js"></script>
+</body>
+</html>

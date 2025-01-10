@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Broker Interface</title>
+</head>
+<body class="font-sans bg-gray-100">
+
+<div class="container mx-auto p-4">
+
+    <!-- Broker Interface Section -->
+    <section class="mb-8">
+        <h2 class="text-3xl font-bold mb-4">Broker Interface</h2>
+
+        <section class="mb-8">
+            
+    
+            <form id="brokerLoginForm" class="space-y-4">
+                <h2 class="text-3xl font-bold mb-4">Broker Login</h2>
+                <div>
+                    <label for="username" class="block text-gray-600">Username</label>
+                    <input type="text" id="username" name="username" class="w-full p-2 border border-gray-300 rounded-md">
+                </div>
+    
+                <div>
+                    <label for="password" class="block text-gray-600">Password</label>
+                    <input type="password" id="password" name="password" class="w-full p-2 border border-gray-300 rounded-md">
+                </div>
+    
+                <div>
+                    <button type="button" id="loginBtn" class="bg-blue-500 text-white py-2 px-4 rounded-md">Login</button>
+                </div>
+            </form>
+        </section>
+
+        <form id="brokerForm" class="space-y-4 hidden">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="teamId" class="block text-gray-600">Team ID</label>
+                    <input type="text" id="teamId" name="teamId" class="w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div class="mb-4 p-4">
+                    <p class="text-xl font-bold">Team Details:</p>
+                    <ul>
+                        
+                        <li><strong>Team Name:</strong> <span id="teamName">N/A</span></li>
+                        <li><strong>Available Balance:</strong> $<span id="availableBalance">0.00</span></li>
+
+                    </ul>
+                    <button type="button" id="getDetails" class="bg-blue-500 text-white py-2 px-4 rounded-md">GET DETAILS</button>
+                </div>
+            
+
+
+                <div>
+                    <label for="stockSelection" class="block text-gray-600">Stock Selection</label>
+                    <select id="stockSelection" name="stockSelection" class="w-full p-2 border border-gray-300 rounded-md">
+                        <!-- Options will be dynamically generated here -->
+                        <!-- Example option: <option value="AAPL">AAPL (Apple Inc.)</option> -->
+                    </select>
+                </div>
+                <div>
+                    <label for="orderType" class="block text-gray-600">Order Type</label>
+                    <select id="orderType" name="orderType" class="w-full p-2 border border-gray-300 rounded-md">
+                        <!-- Options will be dynamically generated here -->
+                        <option value="buy">BUY</option> 
+                        <option value="sell">SELL</option> 
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="quantity" class="block text-gray-600">Quantity</label>
+                    <input type="number" id="quantity" name="quantity" min="1" class="w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label for="price" class="block text-gray-600">Order Value</label>
+                    <input type="text" id="price" name="price" class="w-full p-2 border border-gray-300 rounded-md" readonly>
+                </div>
+            </div>
+            <!--  <p class="text-xl font-bold">Total Trade Amount: $<span id="totalTradeAmount">0.00</span></p> -->
+            <div>
+                <button type="button" id="placeOrder" class="bg-blue-500 text-white py-2 px-4 rounded-md">Place Order</button>
+                <!--  <button type="button" id="calculate" class="bg-gray-300 text-gray-600 py-2 px-4 rounded-md">Calculate</button> -->
+            </div>
+        </form>
+    </section>
+
+    <hr>
+ <form>
+
+ </form>
+</div>
+<footer class="bg-gray-300 p-4 text-center">
+    Stock Simulator Built By Ayushman, Divya, Deepanshu, Dhani 
+  </footer>
+<script src="broker.js"></script>
+
+</body>
+</html>

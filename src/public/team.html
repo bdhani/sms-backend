@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Team Interface</title>
+</head>
+<body class="font-sans bg-blue-100">
+
+<div class="container mx-auto p-4">
+
+    <section class="mb-8">
+        
+        <form id="teamLoginForm" class="space-y-4">
+            <h2 class="text-3xl font-bold mb-4">Team Login</h2>
+            <div>
+                <label for="username" class="block text-gray-600">Username</label>
+                <input type="text" id="username" name="username" class="w-full p-2 border border-gray-300 rounded-md">
+            </div>
+
+            <div>
+                <label for="password" class="block text-gray-600">Password</label>
+                <input type="password" id="password" name="password" class="w-full p-2 border border-gray-300 rounded-md">
+            </div>
+
+            <div>
+                <button type="button" id="loginBtn" class="bg-blue-500 text-white py-2 px-4 rounded-md">Login</button>
+            </div>
+        </form>
+    </section>
+    <!-- Team Interface Section -->
+    <section id="teamInterface" class="mb-8 hidden">
+        <button type="button" id="refresh" class="bg-blue-500 text-white py-2 px-4 rounded-md">Refresh</button>
+        <h2 class="text-3xl font-bold mb-4">Team Interface</h2>
+
+        <!-- Current Cash Balance and Portfolio Worth -->
+        <div class="mb-4">
+            <p class="text-xl font-bold">Current Cash Balance: ₹<span id="currentCashBalance">0.00</span></p>
+            <p class="text-xl font-bold">Portfolio Worth: ₹<span id="portfolioWorth">0.00</span></p>
+            <p class="text-xl font-bold">Total Worth: ₹<span id="totWorth">0.00</span></p>
+        </div>
+
+        <!-- Team Details -->
+        <div class="mb-4">
+            <p class="text-xl font-bold">Team Details </p>
+            <ul>
+                <li><strong>Team ID:</strong> <span id="teamId">N/A</span></li>
+                <li><strong>Team Name:</strong> <span id="teamName">N/A</span></li>
+                <!-- Add more team details as needed -->
+            </ul>
+        </div>
+
+
+         <!-- Holdings Section -->
+         <div class="mb-4">
+            <h3 class="text-2xl font-bold mb-2">Holdings</h3>
+            <div id="holdingsSection" class="space-y-4">
+                <!-- Holdings information will be dynamically generated here -->
+                <!-- Example card structure: -->
+               
+            </div>
+        </div>
+
+  
+    </section>
+
+</div>
+
+<footer class="bg-gray-300 p-4 text-center">
+    Stock Simulator Built By Ayushman, Divya, Deepanshu, Dhani 
+  </footer>
+
+<script src="team.js"></script>
+
+</body>
+</html>
