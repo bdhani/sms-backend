@@ -60,13 +60,13 @@ const performTransaction = asyncHandler(async (req, res) => {
     let priceSensitivity=0.02;
 
     const stockSensitivityMap = {
-        "65bc852fa4641538257291c7": 0.02,
-        "65bc8506a4641538257291c5": 0.025,
-        "65bc8491a4641538257291c1": 0.03,
-        "65bc84d6a4641538257291c3": 0.035,
-        "677a3e76a44e2f494a1dbad0": 0.04,
-        "65bc9234a464153825729232": 0.045,
-        "677a3d01a44e2f494a1dba16": 0.05,
+        "65bc852fa4641538257291c7": 0.02, //pani puri
+        "65bc8506a4641538257291c5": 0.0285, //ideation
+        "65bc8491a4641538257291c1": 0.042,  //Sudarshan
+        "65bc84d6a4641538257291c3": 0.045, //ich
+        "677a3e76a44e2f494a1dbad0": 0.052, //nescafe
+        "65bc9234a464153825729232": 0.106, //taiyyab
+        "677a3d01a44e2f494a1dba16": 0.113, //ccd
     };
     if (stockId in stockSensitivityMap) priceSensitivity = stockSensitivityMap[stockId];
 
