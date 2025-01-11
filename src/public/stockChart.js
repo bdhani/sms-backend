@@ -30,7 +30,7 @@ async function fetchData(allLogs) {
 }
 
 // Function to update the chart
-/*async function updateChart() {
+async function updateChart() {
     const newData = await fetchData(false);
     if (newData && newData.data && newData.data.logs.length > 0) {
         const len = newData.data.logs.length;
@@ -49,8 +49,8 @@ async function fetchData(allLogs) {
         console.error('No new data available to update the chart.');
     }
 }
-*/
 
+/*
 async function updateChart() {
     const newData = await fetchData(false);
     if (newData && newData.data && newData.data.logs.length > 0) {
@@ -88,8 +88,7 @@ async function updateChart() {
         console.error('No new data available to update the chart.');
     }
 }
-
-
+*/
 
 // Function to create the chart
 async function createChart() {
