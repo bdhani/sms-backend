@@ -57,6 +57,7 @@ const performTransaction = asyncHandler(async (req, res) => {
     // Price manipulation logic - capped change
     let maxPriceChangePercentage = 0.05; // Max 5% change per transaction
     let requestedPrice = (stockDetails.valuation / stockDetails.availableStocks) * numberOfStocks;
+    let priceSensitivity=0.02;
 
     const stockSensitivityMap = {
         "65bc852fa4641538257291c7": 0.02,
