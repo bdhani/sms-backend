@@ -57,7 +57,18 @@ const performTransaction = asyncHandler(async (req, res) => {
     // Price manipulation logic - capped change
     let maxPriceChangePercentage = 0.05; // Max 5% change per transaction
     let requestedPrice = (stockDetails.valuation / stockDetails.availableStocks) * numberOfStocks;
-    let priceSensitivity = 0.02; // Adjust this to control the price sensitivity
+
+    const stockSensitivityMap = {
+        "65bc852fa4641538257291c7": 0.02,
+        "65bc8506a4641538257291c5": 0.025,
+        "65bc8491a4641538257291c1": 0.03,
+        "65bc84d6a4641538257291c3": 0.035,
+        "677a3e76a44e2f494a1dbad0": 0.04,
+        "65bc9234a464153825729232": 0.045,
+        "677a3d01a44e2f494a1dba16": 0.05,
+    };
+    if (stockId in stockSensitivityMap) priceSensitivity = stockSensitivityMap[stockId];
+
     let valuationChange = 0;
 
     // Determine if buying or selling and adjust stock price
