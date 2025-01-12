@@ -44,7 +44,7 @@ const performTransaction = asyncHandler(async (req, res) => {
     }
 
     // Time restriction: Prevent opposite transaction within 60 seconds
-    let timeRestriction = new Date(currentTime.getTime() - 60000); // 60 seconds ago
+    let timeRestriction = new Date(currentTime.getTime() - 120000); // 60 seconds ago
 
     let recentTransaction = await Transactions.findOne({
         teamId,
@@ -58,6 +58,18 @@ const performTransaction = asyncHandler(async (req, res) => {
             (recentTransaction.type === "sell" && type === "buy")) {
             throw new ApiError(429, "Cannot perform opposite transaction within 60 seconds.");
         }
+    }
+
+    let lastTransactionForBroker = await Transactions.findOne({
+        teamId,
+        broker: findBrokerResponse.username,
+    }).sort({ createdAt: -1 });
+    
+    if (lastTransactionForBroker) {
+        throw new ApiError(
+            431, 
+            "A broker cannot handle consecutive transactions for the same team."
+        );
     }
 
     let teamDetails = await TeamDetails.findOne({ "teamId": teamId });
