@@ -43,8 +43,9 @@ const performTransaction = asyncHandler(async (req, res) => {
         throw new ApiError(420, "Max transactions reached for 5 minutes")   
     }
 
-    // Time restriction: Prevent opposite transaction within 60 seconds
-    let timeRestriction = new Date(currentTime.getTime() - 120000); // 60 seconds ago
+    // Time restriction: Prevent opposite transaction within 120 seconds
+    /*
+    let timeRestriction = new Date(currentTime.getTime() - 120000); // 120 seconds ago
 
     let recentTransaction = await Transactions.findOne({
         teamId,
@@ -59,6 +60,7 @@ const performTransaction = asyncHandler(async (req, res) => {
             throw new ApiError(429, "Cannot perform opposite transaction within 60 seconds.");
         }
     }
+    */
 
     let lastTransactionForBroker = await Transactions.findOne({
         teamId,
