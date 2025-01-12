@@ -64,7 +64,7 @@ const performTransaction = asyncHandler(async (req, res) => {
 
     let lastTransactionForBroker = await Transactions.findOne({
         teamId,
-        broker: findBrokerResponse.username,
+        stocks: stockDetails.companyName,
     }).sort({ createdAt: -1 });
     
     if (lastTransactionForBroker) {
