@@ -31,17 +31,33 @@ const performTransaction = asyncHandler(async (req, res) => {
     if (stockDetails == null) {
         throw new ApiError(404, "Stock details not found");
     }
-
-        let currentTime = new Date()
-        let previousTime = currentTime - 60000
-        console.log(new Date(previousTime))
-
+    
+    let currentTime = new Date()
+    let previousTime = currentTime - 300000    //5 minutes
+    console.log(new Date(previousTime))
 
     let lastTransactions = await Transactions.find({"teamId" :teamId, "stocks": stockDetails.companyName, "createdAt" : {$gte : previousTime} }).sort({"createdAt": -1})
     console.log(lastTransactions)
 
     if(lastTransactions.length >= 3 && teamId != 0) {
-        throw new ApiError(420, "Max time period reached")   
+        throw new ApiError(420, "Max transactions reached for 5 minutes")   
+    }
+
+    // Time restriction: Prevent opposite transaction within 60 seconds
+    let timeRestriction = new Date(currentTime.getTime() - 60000); // 60 seconds ago
+
+    let recentTransaction = await Transactions.findOne({
+        teamId,
+        stocks: stockDetails.companyName,
+        createdAt: { $gte: timeRestriction },
+    }).sort({ createdAt: -1 });
+
+    if (recentTransaction) {
+        // Check for opposite transaction type
+        if ((recentTransaction.type === "buy" && type === "sell") || 
+            (recentTransaction.type === "sell" && type === "buy")) {
+            throw new ApiError(429, "Cannot perform opposite transaction within 60 seconds.");
+        }
     }
 
     let teamDetails = await TeamDetails.findOne({ "teamId": teamId });
