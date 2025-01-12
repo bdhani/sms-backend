@@ -60,7 +60,7 @@ const performTransaction = asyncHandler(async (req, res) => {
             throw new ApiError(429, "Cannot perform opposite transaction within 60 seconds.");
         }
     }
-    */
+    
 
     let lastTransactionForBroker = await Transactions.findOne({
         teamId,
@@ -73,6 +73,7 @@ const performTransaction = asyncHandler(async (req, res) => {
             "A broker cannot handle consecutive transactions for the same team."
         );
     }
+    */
 
     let teamDetails = await TeamDetails.findOne({ "teamId": teamId });
 
