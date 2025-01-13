@@ -4,7 +4,7 @@ const transactionDetailsSchema = new Schema({
     teamId : {
         type: Number,
         required : true
-    }, 
+    },
     stocks : {
         type : String,
         required: true

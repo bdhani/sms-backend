@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 <td class="number">${index + 1}</td>
                 <td class="name">${team.teamDetails.teamName}</td>
                 <td class="points">₹${team.totalWorth.toFixed(2)}</td>
+                <td class="id">Team ID: ${team.teamDetails.teamId}</td>
             `;
             leaderboardTable.appendChild(row);
         });
